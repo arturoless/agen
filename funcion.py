@@ -1,5 +1,7 @@
 import random
 import math
+import numpy as np
+import matplotlib.pyplot as plt
 
 class Individuo:
     def __init__(self,value,fitness,probability):
@@ -8,7 +10,8 @@ class Individuo:
         self.probability=probability
     def __repr__(self):
         return '{'+str(self.value)+','+str(self.fitness)+','+str(self.probability)+'}'
-
+probabilidad_mutar_por_individuo=1/2
+probabilidad_mutar_por_bit=1/2
 valores_x=[
     0.0000,
     0.2500,
@@ -53,9 +56,10 @@ valores_y=[
     -0.2180,
     0.1824,
     0.1724]
+    
 def fitness(value):
-    a = int(value[0:13],2)/1000
-    b = int(value[13::],2)/1000
+    a = int(value[0:16],2)/10000
+    b = int(value[16::],2)/10000
     valores_y_individuo=[]
     sumatoria=0
     for i in range(len(valores_x)):
@@ -65,12 +69,11 @@ def fitness(value):
     return sumatoria
 
 def mutar(individuo):
-    probabilidad_mutar=1/2
     array_individuo=list(individuo)
     index=0
     for bit in array_individuo:
         azar_mutar=random.random()
-        if azar_mutar<=probabilidad_mutar:
+        if azar_mutar<=probabilidad_mutar_por_bit:
             if bit == '1':
                 array_individuo[index]='0'
             else:
@@ -91,14 +94,14 @@ def conv_binario(dec):
             else:
                 decode.insert(0,'0')
             dec=int(dec/2)
-    while len(decode) !=13:
+    while len(decode) !=16:
         decode.insert(0,'0')
     for n in decode:
         final+=n
     return final
 poblacion=[]
 for _ in range(16):
-    value=conv_binario(random.randint(1,5999))+conv_binario(random.randint(1,5999))
+    value=conv_binario(random.randint(1,59999))+conv_binario(random.randint(1,59999))
     poblacion.append(Individuo(value,fitness(value),0))
 
 poblacion = sorted(poblacion, key=lambda x: x.fitness)
@@ -106,44 +109,43 @@ poblacion = sorted(poblacion, key=lambda x: x.fitness)
 
 
 
-for _ in range(2000):
-    fitness_sum = sum([ind.fitness for ind in poblacion])
-    probability_offset = 0
+for _ in range(20000):
+    # fitness_sum = sum([ind.fitness for ind in poblacion])
+    # probability_offset = 0
 
-    for ind in poblacion:
-        ind.probability = probability_offset + (ind.fitness / fitness_sum)
-        probability_offset += ind.probability
+    # for ind in poblacion:
+    #     ind.probability = probability_offset + (ind.fitness / fitness_sum)
+    #     probability_offset += ind.probability
    
 
     children=[]
     for padre in poblacion:
-        parent_1=poblacion[0]
-        parent_2=poblacion[0]
-        rand = random.random()
-        for ind in poblacion:
-            if ind.probability > rand and ind.probability<1:
-                parent_1=ind
-                break
-        rand = random.random()
-        for ind in poblacion:
-            if ind.probability > rand and ind.probability<1:
-                parent_2=ind
-                break
-        indice_cruza=random.randint(1,24)
-        value1=parent_1.value[0:indice_cruza]+parent_2.value[indice_cruza:26]
-        value2=parent_2.value[0:indice_cruza]+parent_1.value[indice_cruza:26]
+        parent_1=padre
+        parent_2=poblacion[random.randint(0,15)]
+        # rand = random.random()
+        # for ind in poblacion:
+        #     if ind.probability < rand:
+        #         parent_1=ind
+        #         break
+        # rand = random.random()
+        # for ind in poblacion:
+        #     if ind.probability < rand:
+        #         parent_2=ind
+        #         break
+        indice_cruza=random.randint(0,31)
+        value1=parent_1.value[0:indice_cruza]+parent_2.value[indice_cruza:32]
+        value2=parent_2.value[0:indice_cruza]+parent_1.value[indice_cruza:32]
         children.append(Individuo(value1,0,0))
         children.append(Individuo(value2,0,0))
         
     poblacion+=children
     mejor_poblacion=[]
     for individuo in poblacion:
-        prob_mutar=1/2
         azar=random.random()
-        if azar<=prob_mutar:
+        if azar<=probabilidad_mutar_por_individuo:
             individuo.value=mutar(individuo.value)
-        a = int(individuo.value[0:13],2)/1000
-        b = int(individuo.value[13::],2)/1000
+        a = int(individuo.value[0:16],2)/10000
+        b = int(individuo.value[16::],2)/10000
       
         if a<6 and b<6:
             individuo.fitness=fitness(individuo.value)
@@ -151,10 +153,28 @@ for _ in range(2000):
     sorted_ind = sorted(mejor_poblacion, key=lambda x: x.fitness)
     poblacion=sorted_ind[0:16]
     print(poblacion[0])
-    print(int(individuo.value[0:13],2)/1000)
-    print(int(individuo.value[13::],2)/1000)
+    print(int(poblacion[0].value[0:16],2)/10000)
+    print(int(poblacion[0].value[16::],2)/10000)
 
-print(poblacion[0])
-print(int(individuo.value[0:13],2)/1000)
-print(int(individuo.value[13::],2)/1000)
+a = int(poblacion[0].value[0:16],2)/10000
+b = int(poblacion[0].value[16::],2)/10000
+valores_y_individuo=[]
+sumatoria=0
+for i in range(len(valores_x)):
+    y_individuo=math.cos(a*valores_x[i])*math.sin(b*valores_x[i])
+    valores_y_individuo.append(y_individuo)
+    sumatoria+=(abs(valores_y[i]-y_individuo))
+print(valores_y_individuo)
 
+def dibujar(x, y, ya):
+    #plt.scatter(x, y, color="orange", marker="o", s=30)
+
+    plt.plot(x, color="b")
+    plt.plot(y, color="red")
+    plt.plot(ya, color="black")
+    plt.xlabel('X')
+    plt.ylabel('Y')
+
+    plt.show()
+
+dibujar(valores_x, valores_y, valores_y_individuo)
