@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 
 import individual
 
+probabilidad_mutar_por_individuo = 1/2
+probabilidad_mutar_por_bit = 1/2
+
+
 def conv_binario(dec):
     decode = []
     final = ''
@@ -32,12 +36,61 @@ for _ in range(16):
 
 poblacion = sorted(poblacion, key=lambda x: x.fitness)
 
+for _ in range(20000):
+        # fitness_sum = sum([ind.fitness for ind in poblacion])
+        # probability_offset = 0
+
+        # for ind in poblacion:
+        #     ind.probability = probability_offset + (ind.fitness / fitness_sum)
+        #     probability_offset += ind.probability
+
+    children = []
+    for padre in poblacion:
+        parent_1 = padre
+        parent_2 = poblacion[random.randint(0, 15)]
+        # rand = random.random()
+        # for ind in poblacion:
+        #     if ind.probability < rand:
+        #         parent_1=ind
+        #         break
+        # rand = random.random()
+        # for ind in poblacion:
+        #     if ind.probability < rand:
+        #         parent_2=ind
+        #         break
+        indice_cruza = random.randint(0, 31)
+        value1 = parent_1.value[0:indice_cruza] + \
+            parent_2.value[indice_cruza:32]
+        value2 = parent_2.value[0:indice_cruza] + \
+            parent_1.value[indice_cruza:32]
+        children.append(individual.Individuo(value1, 0, 0))
+        children.append(individual.Individuo(value2, 0, 0))
+
+    poblacion += children
+    mejor_poblacion = []
+    for individuo in poblacion:
+        azar = random.random()
+        if azar <= probabilidad_mutar_por_individuo:
+            individuo.value = individual.mutar(individuo.value)
+        a = int(individuo.value[0:16], 2)/10000
+        b = int(individuo.value[16::], 2)/10000
+
+        if a < 6 and b < 6:
+            individuo.fitness = individual.fitness(individuo.value)
+            mejor_poblacion.append(individuo)
+    sorted_ind = sorted(mejor_poblacion, key=lambda x: x.fitness)
+    poblacion = sorted_ind[0:16]
+    print(poblacion[0])
+    print(int(poblacion[0].value[0:16], 2)/10000)
+    print(int(poblacion[0].value[16::], 2)/10000)
+
 a = int(poblacion[0].value[0:16], 2)/10000
 b = int(poblacion[0].value[16::], 2)/10000
 valores_y_individuo = []
 sumatoria = 0
 for i in range(len(individual.valores_x)):
-    y_individuo = math.cos(a*individual.valores_x[i])*math.sin(b*individual.valores_x[i])
+    y_individuo = math.cos(
+        a*individual.valores_x[i])*math.sin(b*individual.valores_x[i])
     valores_y_individuo.append(y_individuo)
     sumatoria += (abs(individual.valores_y[i]-y_individuo))
 print(valores_y_individuo)
@@ -52,7 +105,8 @@ def dibujar(x, y, ya):
 
     plt.show()
 
+
 if __name__ == "__main__":
-    individual.cruza(poblacion)
+    # individual.cruza(poblacion)
     dibujar(individual.valores_x, individual.valores_y, valores_y_individuo)
     print('end')
