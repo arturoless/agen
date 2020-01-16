@@ -1,21 +1,9 @@
 import random
 import math
-import numpy as np
-import matplotlib.pyplot as plt
-
-
-class Individuo:
-    def __init__(self, value, fitness, probability):
-        self.value = value
-        self.fitness = fitness
-        self.probability = probability
-
-    def __repr__(self):
-        return '{'+str(self.value)+','+str(self.fitness)+','+str(self.probability)+'}'
-
 
 probabilidad_mutar_por_individuo = 1/2
 probabilidad_mutar_por_bit = 1/2
+
 valores_x = [
     0.0000,
     0.2500,
@@ -61,17 +49,14 @@ valores_y = [
     0.1824,
     0.1724]
 
+class Individuo:
+    def __init__(self, value, fitness, probability):
+        self.value = value
+        self.fitness = fitness
+        self.probability = probability
 
-def fitness(value):
-    a = int(value[0:16], 2)/10000
-    b = int(value[16::], 2)/10000
-    valores_y_individuo = []
-    sumatoria = 0
-    for i in range(len(valores_x)):
-        y_individuo = math.cos(a*valores_x[i])*math.sin(b*valores_x[i])
-        valores_y_individuo.append(y_individuo)
-        sumatoria += (abs(valores_y[i]-y_individuo))
-    return sumatoria
+    def __repr__(self):
+        return '{'+str(self.value)+','+str(self.fitness)+','+str(self.probability)+'}'
 
 
 def mutar(individuo):
@@ -88,35 +73,19 @@ def mutar(individuo):
     return ''.join(array_individuo)
 
 
-def conv_binario(dec):
-    decode = []
-    final = ''
-    if dec == 0:
-        decode.insert(0, '0')
-    else:
-        while dec != 0:
-            if int(dec) % 2 != 0:
-                decode.insert(0, '1')
-            else:
-                decode.insert(0, '0')
-            dec = int(dec/2)
-    while len(decode) != 16:
-        decode.insert(0, '0')
-    for n in decode:
-        final += n
-    return final
+def fitness(value):
+    a = int(value[0:16], 2)/10000
+    b = int(value[16::], 2)/10000
+    valores_y_individuo = []
+    sumatoria = 0
+    for i in range(len(valores_x)):
+        y_individuo = math.cos(a*valores_x[i])*math.sin(b*valores_x[i])
+        valores_y_individuo.append(y_individuo)
+        sumatoria += (abs(valores_y[i]-y_individuo))
+    return sumatoria
 
 
-poblacion = []
-for _ in range(16):
-    value = conv_binario(random.randint(1, 59999)) + \
-        conv_binario(random.randint(1, 59999))
-    poblacion.append(Individuo(value, fitness(value), 0))
-
-poblacion = sorted(poblacion, key=lambda x: x.fitness)
-
-
-def cruza():
+def cruza(poblacion):
     for _ in range(20000):
         # fitness_sum = sum([ind.fitness for ind in poblacion])
         # probability_offset = 0
@@ -164,29 +133,3 @@ def cruza():
         print(poblacion[0])
         print(int(poblacion[0].value[0:16], 2)/10000)
         print(int(poblacion[0].value[16::], 2)/10000)
-
-
-a = int(poblacion[0].value[0:16], 2)/10000
-b = int(poblacion[0].value[16::], 2)/10000
-valores_y_individuo = []
-sumatoria = 0
-for i in range(len(valores_x)):
-    y_individuo = math.cos(a*valores_x[i])*math.sin(b*valores_x[i])
-    valores_y_individuo.append(y_individuo)
-    sumatoria += (abs(valores_y[i]-y_individuo))
-print(valores_y_individuo)
-
-
-def dibujar(x, y, ya):
-    #plt.scatter(x, y, color="orange", marker="o", s=30)
-
-    plt.plot(x, color="b")
-    plt.plot(y, color="red")
-    plt.plot(ya, color="black")
-    plt.xlabel('X')
-    plt.ylabel('Y')
-
-    plt.show()
-
-
-dibujar(valores_x, valores_y, valores_y_individuo)
