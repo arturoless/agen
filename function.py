@@ -1,13 +1,17 @@
+import individual
 import random
 import math
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
-import individual
 
 probabilidad_mutar_por_individuo = 1/2
 probabilidad_mutar_por_bit = 1/2
-
+NUM_ITERACIONES = 10
+poblacion = []
+poblacion_total = []
 
 def conv_binario(dec):
     decode = []
@@ -28,7 +32,6 @@ def conv_binario(dec):
     return final
 
 
-poblacion = []
 for _ in range(16):
     value = conv_binario(random.randint(1, 59999)) + \
         conv_binario(random.randint(1, 59999))
@@ -36,7 +39,9 @@ for _ in range(16):
 
 poblacion = sorted(poblacion, key=lambda x: x.fitness)
 
-for _ in range(20000):
+generation = 0
+
+for _ in range(NUM_ITERACIONES):
         # fitness_sum = sum([ind.fitness for ind in poblacion])
         # probability_offset = 0
 
@@ -79,11 +84,13 @@ for _ in range(20000):
             individuo.fitness = individual.fitness(individuo.value)
             mejor_poblacion.append(individuo)
     sorted_ind = sorted(mejor_poblacion, key=lambda x: x.fitness)
+    poblacion_total += poblacion
     poblacion = sorted_ind[0:16]
+    print(f'------------------Generación: {generation}---------------------')
     print(poblacion[0])
     print(int(poblacion[0].value[0:16], 2)/10000)
     print(int(poblacion[0].value[16::], 2)/10000)
-
+    generation += 1
 a = int(poblacion[0].value[0:16], 2)/10000
 b = int(poblacion[0].value[16::], 2)/10000
 valores_y_individuo = []
@@ -96,17 +103,34 @@ for i in range(len(individual.valores_x)):
 print(valores_y_individuo)
 
 
+def worst_fitness(poblacion):
+    peor = []
+    peor = sorted(poblacion, key=lambda x: x.value)
+    print(f'WORST  {poblacion}')
+    return peor
+
+
+def promedio(poblacion):
+    promedio = 0.0
+    for i in range(0, len(poblacion)):
+        promedio = promedio+float(poblacion[i].value)
+    print(f'PROMEDIO: {promedio/len(poblacion)}')
+    print(f'TAMAÑO: {len(poblacion)}')
+    return promedio/len(poblacion)
+
+
 def dibujar(x, y, ya):
     plt.plot(x, color="b")
     plt.plot(y, color="red")
     plt.plot(ya, color="black")
     plt.xlabel('X')
-    plt.ylabel('Y')
-
+    plt.ylabel('f(x)')
+    plt.grid(True)
     plt.show()
 
 
 if __name__ == "__main__":
     # individual.cruza(poblacion)
     dibujar(individual.valores_x, individual.valores_y, valores_y_individuo)
-    print('end')
+    worst_fitness(poblacion_total)
+    promedio(poblacion_total)
