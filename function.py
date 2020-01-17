@@ -4,12 +4,11 @@ import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-plt.style.use('ggplot')
 
 
 probabilidad_mutar_por_individuo = 1/2
 probabilidad_mutar_por_bit = 1/2
-NUM_ITERACIONES = 10
+numero_iteraciones = 1000
 poblacion = []
 promedios=[]
 mejores=[]
@@ -35,12 +34,7 @@ def conv_binario(dec):
 
 
 def promedio(poblacion):
-    promedio = 0.0
-    for i in range(0, len(poblacion)):
-        promedio = promedio+float(poblacion[i].value)
-    print(f'PROMEDIO: {promedio/len(poblacion)}')
-    print(f'TAMAÑO: {len(poblacion)}')
-    return promedio/len(poblacion)
+    return sum(individuo.fitness for individuo in poblacion)/len(poblacion)
 
 
 for _ in range(16):
@@ -52,7 +46,7 @@ poblacion = sorted(poblacion, key=lambda x: x.fitness)
 
 generation = 0
 
-for _ in range(NUM_ITERACIONES):
+for _ in range(numero_iteraciones):
         # fitness_sum = sum([ind.fitness for ind in poblacion])
         # probability_offset = 0
 
@@ -103,10 +97,10 @@ for _ in range(NUM_ITERACIONES):
 
 
     poblacion = sorted_ind[0:16]
-    print(f'------------------Generación: {generation}---------------------')
-    print(poblacion[0])
-    print(int(poblacion[0].value[0:16], 2)/10000)
-    print(int(poblacion[0].value[16::], 2)/10000)
+    # print(f'------------------Generación: {generation}---------------------')
+    # print(poblacion[0])
+    # print(int(poblacion[0].value[0:16], 2)/10000)
+    # print(int(poblacion[0].value[16::], 2)/10000)
     generation += 1
 a = int(poblacion[0].value[0:16], 2)/10000
 b = int(poblacion[0].value[16::], 2)/10000
@@ -134,15 +128,21 @@ print(peores)
 
 
 def dibujar(x, y, ya):
-    plt.plot(x, color="b")
-    plt.plot(y, color="red")
-    plt.plot(ya, color="black")
-    plt.xlabel('X')
-    plt.ylabel('f(x)')
-    plt.grid(True)
+
+    fig, grafica = plt.subplots(2)
+    grafica[0].set_title('Funcion Y ')
+    grafica[0].plot(y, color="red",label="valores de Y dados")
+    grafica[0].plot(ya, color="black",label="valores de Y encontrados")
+    grafica[0].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
+    grafica[1].set_title('Fitness')
+    grafica[1].plot(mejores, color="green",label="mejores")
+    grafica[1].plot(promedios, color="blue",label="media")
+    grafica[1].plot(peores, color="red",label="peores")
+    grafica[1].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
+
+
     plt.show()
 
 
 if __name__ == "__main__":
-    # individual.cruza(poblacion)
     dibujar(individual.valores_x, individual.valores_y, valores_y_individuo)
