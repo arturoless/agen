@@ -1,7 +1,6 @@
 import random
 import math
 
-probabilidad_mutar_por_individuo = 1/2
 probabilidad_mutar_por_bit = 1/2
 
 valores_x = [
@@ -76,60 +75,9 @@ def mutar(individuo):
 def fitness(value):
     a = int(value[0:16], 2)/10000
     b = int(value[16::], 2)/10000
-    valores_y_individuo = []
     sumatoria = 0
     for i in range(len(valores_x)):
         y_individuo = math.cos(a*valores_x[i])*math.sin(b*valores_x[i])
-        valores_y_individuo.append(y_individuo)
-        sumatoria += (abs(valores_y[i]-y_individuo))
-    return sumatoria
+        sumatoria += math.pow(abs(valores_y[i]-y_individuo),2)
+    return sumatoria/len(valores_x)
 
-
-def cruza(poblacion):
-    for _ in range(20000):
-        # fitness_sum = sum([ind.fitness for ind in poblacion])
-        # probability_offset = 0
-
-        # for ind in poblacion:
-        #     ind.probability = probability_offset + (ind.fitness / fitness_sum)
-        #     probability_offset += ind.probability
-
-        children = []
-        for padre in poblacion:
-            parent_1 = padre
-            parent_2 = poblacion[random.randint(0, 15)]
-            # rand = random.random()
-            # for ind in poblacion:
-            #     if ind.probability < rand:
-            #         parent_1=ind
-            #         break
-            # rand = random.random()
-            # for ind in poblacion:
-            #     if ind.probability < rand:
-            #         parent_2=ind
-            #         break
-            indice_cruza = random.randint(0, 31)
-            value1 = parent_1.value[0:indice_cruza] + \
-                parent_2.value[indice_cruza:32]
-            value2 = parent_2.value[0:indice_cruza] + \
-                parent_1.value[indice_cruza:32]
-            children.append(Individuo(value1, 0, 0))
-            children.append(Individuo(value2, 0, 0))
-
-        poblacion += children
-        mejor_poblacion = []
-        for individuo in poblacion:
-            azar = random.random()
-            if azar <= probabilidad_mutar_por_individuo:
-                individuo.value = mutar(individuo.value)
-            a = int(individuo.value[0:16], 2)/10000
-            b = int(individuo.value[16::], 2)/10000
-
-            if a < 6 and b < 6:
-                individuo.fitness = fitness(individuo.value)
-                mejor_poblacion.append(individuo)
-        sorted_ind = sorted(mejor_poblacion, key=lambda x: x.fitness)
-        poblacion = sorted_ind[0:16]
-        print(poblacion[0])
-        print(int(poblacion[0].value[0:16], 2)/10000)
-        print(int(poblacion[0].value[16::], 2)/10000)

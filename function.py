@@ -53,7 +53,7 @@ for _ in range(numero_iteraciones):
         # for ind in poblacion:
         #     ind.probability = probability_offset + (ind.fitness / fitness_sum)
         #     probability_offset += ind.probability
-
+    
     children = []
     for padre in poblacion:
         parent_1 = padre
@@ -112,12 +112,10 @@ for i in range(len(individual.valores_x)):
     valores_y_individuo.append(y_individuo)
     sumatoria += (abs(individual.valores_y[i]-y_individuo))
 print(valores_y_individuo)
-print('mejores')
-print(mejores)
-print('promedios')
-print(promedios)
-print('peores')
-print(peores)
+
+print(poblacion[0])
+print(int(poblacion[0].value[0:16], 2)/10000)
+print(int(poblacion[0].value[16::], 2)/10000)
 
 # def worst_fitness(poblacion):
 #     peor = []
@@ -140,6 +138,10 @@ def dibujar(x, y, ya):
     grafica[1].plot(peores, color="red",label="peores")
     grafica[1].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
 
+    data = [y,ya]
+
+    table = plt.table(cellText=data, loc='center')
+    table.auto_set_font_size(False)
 
     plt.show()
 
