@@ -1,10 +1,9 @@
+import matplotlib.pyplot as plt
 import individual
 import random
 import math
-import numpy as np
 import matplotlib
-import matplotlib.pyplot as plt
-# import plotly.graph_objects as go
+matplotlib.use('TkAgg')
 
 
 probabilidad_mutar_por_individuo = 1/2
@@ -48,27 +47,11 @@ poblacion = sorted(poblacion, key=lambda x: x.fitness)
 generation = 0
 
 for _ in range(numero_iteraciones):
-        # fitness_sum = sum([ind.fitness for ind in poblacion])
-        # probability_offset = 0
-
-        # for ind in poblacion:
-        #     ind.probability = probability_offset + (ind.fitness / fitness_sum)
-        #     probability_offset += ind.probability
-    
     children = []
     for padre in poblacion:
         parent_1 = poblacion[0]
         parent_2 = poblacion[random.randint(0, 15)]
-        # rand = random.random()
-        # for ind in poblacion:
-        #     if ind.probability < rand:
-        #         parent_1=ind
-        #         break
-        # rand = random.random()
-        # for ind in poblacion:
-        #     if ind.probability < rand:
-        #         parent_2=ind
-        #         break
+
         indice_cruza = random.randint(0, 31)
         value1 = parent_1.value[0:indice_cruza] + \
             parent_2.value[indice_cruza:32]
@@ -106,27 +89,21 @@ a = int(poblacion[0].value[0:16], 2)/10000
 b = int(poblacion[0].value[16::], 2)/10000
 valores_y_individuo = []
 for i in range(len(individual.valores_x)):
-    y_individuo = math.cos(a*individual.valores_x[i])*math.sin(b*individual.valores_x[i])
-    valores_y_individuo.append(round(y_individuo,4))
+    y_individuo = math.cos(
+        a*individual.valores_x[i])*math.sin(b*individual.valores_x[i])
+    valores_y_individuo.append(round(y_individuo, 4))
 print(valores_y_individuo)
 
 print(poblacion[0])
 print(f'a = {int(poblacion[0].value[0:16], 2)/10000}')
 print(f'b = {int(poblacion[0].value[16::], 2)/10000}')
 
-# def worst_fitness(poblacion):
-#     peor = []
-#     peor = sorted(poblacion, key=lambda x: x.value)
-#     print(f'WORST  {poblacion}')
-#     return peor
-
 
 def dibujar(x, y, ya):
-
     fig, grafica = plt.subplots(2)
     grafica[0].set_title('Comparación entre datos reales y encontrados')
-    grafica[0].plot(x,y, color="red", label="Y reales")
-    grafica[0].plot(x,ya, color="black", label="Y encontrados")
+    grafica[0].plot(x, y, color="red", label="Y reales")
+    grafica[0].plot(x, ya, color="black", label="Y encontrados")
     grafica[0].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
     grafica[0].grid()
     grafica[1].set_title('Evolución de fitness')
@@ -136,16 +113,11 @@ def dibujar(x, y, ya):
     grafica[1].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
     grafica[1].grid()
     grafica[1].set(xlabel='Generacion', ylabel='Fitness')
-    data = [x,y,ya]
+    data = [x, y, ya]
 
-    table = plt.table(cellText=data, loc='bottom',rowLabels=['X','Yr','Ya'],bbox=[-0.14,-0.55,1.25,.28])
+    table = plt.table(cellText=data, loc='bottom', rowLabels=[
+                      'X', 'Yr', 'Ya'], bbox=[-0.14, -0.55, 1.25, .28])
     table.auto_set_font_size(False)
-    # fig = go.Figure(data=[go.Table(header=dict(values=['A Scores', 'B Scores']),
-    #                                cells=dict(values=[[100, 90, 80, 90], [95, 85, 75, 95]]))
-    #                       ])
-
-    # fig.show()
-    #plt.grid()
     plt.subplots_adjust(bottom=0.25)
     plt.show()
 

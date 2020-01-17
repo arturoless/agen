@@ -48,6 +48,7 @@ valores_y = [
     0.1824,
     0.1724]
 
+
 class Individuo:
     def __init__(self, value, fitness, probability):
         self.value = value
@@ -78,6 +79,5 @@ def fitness(value):
     sumatoria = 0
     for i in range(len(valores_x)):
         y_individuo = math.cos(a*valores_x[i])*math.sin(b*valores_x[i])
-        sumatoria += math.pow(abs(valores_y[i]-y_individuo),2)
+        sumatoria += math.pow(abs(valores_y[i]-y_individuo), 2)
     return sumatoria/len(valores_x)
-
