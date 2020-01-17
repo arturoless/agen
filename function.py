@@ -11,7 +11,9 @@ probabilidad_mutar_por_individuo = 1/2
 probabilidad_mutar_por_bit = 1/2
 NUM_ITERACIONES = 10
 poblacion = []
-poblacion_total = []
+promedios=[]
+mejores=[]
+peores=[]
 
 def conv_binario(dec):
     decode = []
@@ -30,6 +32,15 @@ def conv_binario(dec):
     for n in decode:
         final += n
     return final
+
+
+def promedio(poblacion):
+    promedio = 0.0
+    for i in range(0, len(poblacion)):
+        promedio = promedio+float(poblacion[i].value)
+    print(f'PROMEDIO: {promedio/len(poblacion)}')
+    print(f'TAMAÑO: {len(poblacion)}')
+    return promedio/len(poblacion)
 
 
 for _ in range(16):
@@ -84,7 +95,13 @@ for _ in range(NUM_ITERACIONES):
             individuo.fitness = individual.fitness(individuo.value)
             mejor_poblacion.append(individuo)
     sorted_ind = sorted(mejor_poblacion, key=lambda x: x.fitness)
-    poblacion_total += poblacion
+
+    #sacar datos
+    mejores.append(sorted_ind[0].fitness)
+    promedios.append(promedio(sorted_ind))
+    peores.append(sorted_ind[len(sorted_ind)-1].fitness)
+
+
     poblacion = sorted_ind[0:16]
     print(f'------------------Generación: {generation}---------------------')
     print(poblacion[0])
@@ -101,22 +118,19 @@ for i in range(len(individual.valores_x)):
     valores_y_individuo.append(y_individuo)
     sumatoria += (abs(individual.valores_y[i]-y_individuo))
 print(valores_y_individuo)
+print('mejores')
+print(mejores)
+print('promedios')
+print(promedios)
+print('peores')
+print(peores)
 
+# def worst_fitness(poblacion):
+#     peor = []
+#     peor = sorted(poblacion, key=lambda x: x.value)
+#     print(f'WORST  {poblacion}')
+#     return peor
 
-def worst_fitness(poblacion):
-    peor = []
-    peor = sorted(poblacion, key=lambda x: x.value)
-    print(f'WORST  {poblacion}')
-    return peor
-
-
-def promedio(poblacion):
-    promedio = 0.0
-    for i in range(0, len(poblacion)):
-        promedio = promedio+float(poblacion[i].value)
-    print(f'PROMEDIO: {promedio/len(poblacion)}')
-    print(f'TAMAÑO: {len(poblacion)}')
-    return promedio/len(poblacion)
 
 
 def dibujar(x, y, ya):
@@ -132,5 +146,3 @@ def dibujar(x, y, ya):
 if __name__ == "__main__":
     # individual.cruza(poblacion)
     dibujar(individual.valores_x, individual.valores_y, valores_y_individuo)
-    worst_fitness(poblacion_total)
-    promedio(poblacion_total)
