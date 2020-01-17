@@ -4,15 +4,17 @@ import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 
 probabilidad_mutar_por_individuo = 1/2
 probabilidad_mutar_por_bit = 1/2
 numero_iteraciones = 1000
 poblacion = []
-promedios=[]
-mejores=[]
-peores=[]
+promedios = []
+mejores = []
+peores = []
+
 
 def conv_binario(dec):
     decode = []
@@ -90,11 +92,10 @@ for _ in range(numero_iteraciones):
             mejor_poblacion.append(individuo)
     sorted_ind = sorted(mejor_poblacion, key=lambda x: x.fitness)
 
-    #sacar datos
+    # sacar datos
     mejores.append(sorted_ind[0].fitness)
     promedios.append(promedio(sorted_ind))
     peores.append(sorted_ind[len(sorted_ind)-1].fitness)
-
 
     poblacion = sorted_ind[0:16]
     # print(f'------------------Generación: {generation}---------------------')
@@ -124,25 +125,31 @@ print(int(poblacion[0].value[16::], 2)/10000)
 #     return peor
 
 
-
 def dibujar(x, y, ya):
 
     fig, grafica = plt.subplots(2)
     grafica[0].set_title('Funcion Y ')
-    grafica[0].plot(y, color="red",label="valores de Y dados")
-    grafica[0].plot(ya, color="black",label="valores de Y encontrados")
+    grafica[0].plot(y, color="red", label="valores de Y dados")
+    grafica[0].plot(ya, color="black", label="valores de Y encontrados")
     grafica[0].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
     grafica[1].set_title('Fitness')
-    grafica[1].plot(mejores, color="green",label="mejores")
-    grafica[1].plot(promedios, color="blue",label="media")
-    grafica[1].plot(peores, color="red",label="peores")
+    grafica[1].plot(mejores, color="green", label="mejores")
+    grafica[1].plot(promedios, color="blue", label="media")
+    grafica[1].plot(peores, color="red", label="peores")
     grafica[1].legend(bbox_to_anchor=(1, 1), loc='center', borderaxespad=0.)
 
+<<<<<<< HEAD
     data = [y,ya]
 
     table = plt.table(cellText=data, loc='center')
     table.auto_set_font_size(False)
+=======
+    fig = go.Figure(data=[go.Table(header=dict(values=['A Scores', 'B Scores']),
+                                   cells=dict(values=[[100, 90, 80, 90], [95, 85, 75, 95]]))
+                          ])
+>>>>>>> 641ea240f26016d9e141d882319558bec5dba354
 
+    fig.show()
     plt.show()
 
 
