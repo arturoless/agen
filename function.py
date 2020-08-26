@@ -60,7 +60,7 @@ for _ in range(numero_iteraciones):
         children.append(individual.Individuo(value1, 0, 0))
         children.append(individual.Individuo(value2, 0, 0))
 
-    poblacion += children
+    poblacion = children
     mejor_poblacion = []
     for individuo in poblacion:
         azar = random.random()
@@ -80,10 +80,7 @@ for _ in range(numero_iteraciones):
     peores.append(sorted_ind[len(sorted_ind)-1].fitness)
 
     poblacion = sorted_ind[0:16]
-    # print(f'------------------Generación: {generation}---------------------')
-    # print(poblacion[0])
-    # print(int(poblacion[0].value[0:16], 2)/10000)
-    # print(int(poblacion[0].value[16::], 2)/10000)
+    
     generation += 1
 a = int(poblacion[0].value[0:16], 2)/10000
 b = int(poblacion[0].value[16::], 2)/10000
@@ -95,6 +92,7 @@ for i in range(len(individual.valores_x)):
 print(valores_y_individuo)
 
 print(poblacion[0])
+print(f'Fitness de la población: {poblacion[0].fitness}')
 print(f'a = {int(poblacion[0].value[0:16], 2)/10000}')
 print(f'b = {int(poblacion[0].value[16::], 2)/10000}')
 
